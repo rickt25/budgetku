@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BudgetKu</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="sign_in"><u>Sign In</u></string>
+    <string name="sign_up"><u>Sign Up</u></string>
+
+</resources>
