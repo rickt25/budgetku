@@ -1,6 +1,8 @@
 package com.example.budgetku.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,6 +16,7 @@ import android.widget.ImageButton;
 
 import com.example.budgetku.Api.ApiClient;
 import com.example.budgetku.R;
+import com.example.budgetku.fragments.WalletsFragment;
 import com.example.budgetku.model.api.LoginResponse;
 import com.example.budgetku.model.api.WalletRequest;
 import com.example.budgetku.model.api.WalletResponse;

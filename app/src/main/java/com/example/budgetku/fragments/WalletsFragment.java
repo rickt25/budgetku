@@ -75,8 +75,6 @@ public class WalletsFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddWalletActivity.class);
                 startActivity(intent);
-
-                loadWallets();
             }
         });
 

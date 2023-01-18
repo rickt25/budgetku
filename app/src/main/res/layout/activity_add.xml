@@ -74,7 +74,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="1mm"
-        android:layout_marginTop="2mm">
+        android:layout_marginTop="2mm"
+        android:orientation="horizontal">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -83,7 +84,7 @@
             android:layout_marginStart="5mm"
             />
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+            android:layout_width="235dp"
             android:layout_height="wrap_content"
             android:hint="Choose category"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -95,6 +96,13 @@
                 android:completionThreshold="1"
                 android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
+        <ImageButton
+            android:id="@+id/addCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_baseline_add_circle_outline_24"
+            android:background="@color/white"
+            android:layout_marginStart="2mm"/>
 
     </LinearLayout>
 

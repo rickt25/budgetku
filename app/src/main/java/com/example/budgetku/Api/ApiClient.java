@@ -57,4 +57,16 @@ public class ApiClient {
         CategoryService categoryService = getRetrofit().create(CategoryService.class);
         return categoryService;
     }
+
+    public static ActivityService activityService()
+    {
+        ActivityService activityService = getRetrofit().create(ActivityService.class);
+        return activityService;
+    }
+
+    public static HomeService homeService()
+    {
+        HomeService homeService = getRetrofit().create(HomeService.class);
+        return homeService;
+    }
 }

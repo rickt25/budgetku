@@ -47,10 +47,7 @@ public class HomeActivity extends AppCompatActivity {
             {
                 case R.id.home:
                 {
-                    HomeFragment homeFragment = new HomeFragment();
-                    homeFragment.setUsername("harris");
                     replaceFragment(new HomeFragment());
-
                     break;
                 }
 

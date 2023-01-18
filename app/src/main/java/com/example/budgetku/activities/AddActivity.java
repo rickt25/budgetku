@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,6 +23,8 @@ import com.example.budgetku.Api.ApiClient;
 import com.example.budgetku.R;
 import com.example.budgetku.adapters.CategoryAutoCompleteAdapter;
 import com.example.budgetku.adapters.WalletAutoCompleteAdapter;
+import com.example.budgetku.model.api.ActivityRequest;
+import com.example.budgetku.model.api.CategoryRequest;
 import com.example.budgetku.model.api.CategoryResponse;
 import com.example.budgetku.model.api.WalletRequest;
 import com.example.budgetku.model.api.WalletResponse;
@@ -54,13 +57,13 @@ public class AddActivity extends AppCompatActivity {
 
     private Wallet choosed_wallet;
     private Category choosed_category;
-    private Integer input_amount;
     private Integer choosed_type;
-
 
 
     private AlertDialog.Builder dialog;
     private AlertDialog alertDialog;
+
+    private AlertDialog addCategoryDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +109,6 @@ public class AddActivity extends AppCompatActivity {
 
 
 
-
-
         ImageButton saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,16 +116,75 @@ public class AddActivity extends AppCompatActivity {
                 addActivity();
             }
         });
+
+        ImageButton addCategory = findViewById(R.id.addCategory);
+        addCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addCategoryDialog.show();
+            }
+        });
+
+        amount = (EditText) findViewById(R.id.amount);
     }
 
     private void addActivity()
     {
+        if(!validate())
+            return;
+
         int selectedId = radioGroup.getCheckedRadioButtonId();
         RadioButton selected = (RadioButton) findViewById(selectedId);
-        if(selected.equals(radioIncome))
-        {
 
-        }
+        choosed_type = (selected.equals(radioIncome)) ? 1 : 0;
+
+        ActivityRequest activityRequest = new ActivityRequest();
+        activityRequest.setWallet_id(choosed_wallet.getId());
+        activityRequest.setCategory_id(choosed_category.getId());
+        activityRequest.setActivity_type(choosed_type);
+        activityRequest.setAmount(Integer.parseInt(amount.getText().toString()));
+
+        Call<Response> activityResponseCall = ApiClient.activityService().addActivity(token, activityRequest);
+
+        activityResponseCall.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                if(response.isSuccessful())
+                {
+                    Toast.makeText(getApplicationContext(),"Activity Created", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void addCategory(String categoryName)
+    {
+        CategoryRequest categoryRequest = new CategoryRequest();
+        categoryRequest.setCategory_name(categoryName);
+        Call<Response> categoryResponseCall = ApiClient.categoryService().addCategory(token, categoryRequest);
+
+        categoryResponseCall.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                if(response.isSuccessful())
+                {
+                    Toast.makeText(getApplicationContext(),"Category Created", Toast.LENGTH_LONG).show();
+                }
+                loadCategory();
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+
+            }
+        });
     }
 
     private void loadCategory()
@@ -198,34 +258,56 @@ public class AddActivity extends AppCompatActivity {
             }
         });
         alertDialog = dialog.create();
-    }
 
-    private void addWallet(String wallet_name, Integer balance)
-    {
-        this.token = new String();
-        WalletRequest walletRequest = new WalletRequest();
-        walletRequest.setWallet_name(wallet_name);
-        walletRequest.setBalance(balance);
 
-        SharedPreferences shared = getApplication().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        this.token = "Bearer " + shared.getString(LoginActivity.token, "");
+        dialog = new AlertDialog.Builder(this);
 
-        Log.d("Token: ", this.token);
-        Call<Response> walletResponseCall = ApiClient.walletService().addWallet(this.token, walletRequest);
+        dialog.setTitle("Add new Category");
+        final EditText new_category_name = new EditText(this);
+        new_category_name.setHint("Category Name");
 
-        walletResponseCall.enqueue(new Callback<Response>() {
+        new_category_name.setInputType(InputType.TYPE_CLASS_TEXT);
+        dialog.setView(new_category_name);
+
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                if (response.isSuccessful()) {
-                    alertDialog.show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Response> call, Throwable t) {
-
+            public void onClick(DialogInterface dialog, int which) {
+                addCategory(new_category_name.getText().toString());
             }
         });
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        
+        addCategoryDialog = dialog.create();
+    }
 
+
+    private boolean validate()
+    {
+        if(choosed_wallet == null)
+        {
+            Toast.makeText(getApplicationContext(), "Choose a wallet", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if(choosed_category == null)
+        {
+            Toast.makeText(getApplicationContext(), "Choose a Category", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if(amount.getText().toString() == null || amount.getText().toString().equals(""))
+        {
+            Toast.makeText(getApplicationContext(), "Please input amount", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if( findViewById(radioGroup.getCheckedRadioButtonId()) == null)
+        {
+            Toast.makeText(getApplicationContext(), "Please select type", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }
