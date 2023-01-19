@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.budgetku.R;
 import com.example.budgetku.model.object.Activity;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
     private List<Activity> activityList;
@@ -43,7 +45,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         Activity activity = activityList.get(i);
         activityViewHolder.wallet_name.setText(activity.getWallet_name());
         activityViewHolder.category_name.setText(activity.getCategory_name());
-        activityViewHolder.amount.setText(activity.getAmount().toString());
+        activityViewHolder.amount.setText(currencyRupiah(activity.getAmount().toString()));
 
         if(activity.getActivity_type().equals("expense"))
         {
@@ -70,5 +72,12 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             wallet_name = itemView.findViewById(R.id.wallet);
             amount = itemView.findViewById(R.id.amount);
         }
+    }
+
+    private String currencyRupiah(String amount){
+        Double money = Double.parseDouble(amount);
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(money);
     }
 }

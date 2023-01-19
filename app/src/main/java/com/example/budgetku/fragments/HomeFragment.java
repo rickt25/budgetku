@@ -3,13 +3,17 @@ package com.example.budgetku.fragments;
 import static com.example.budgetku.activities.LoginActivity.token;
 import static com.example.budgetku.activities.LoginActivity.username;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,8 +34,10 @@ import com.example.budgetku.model.object.DailyActivity;
 import com.example.budgetku.model.object.Overview;
 import com.example.budgetku.model.object.TodayActivity;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -118,9 +124,9 @@ public class HomeFragment extends Fragment {
                 {
                     Overview result = overviewResponse.getData();
 
-                    totalBalance.setText("IDR " + result.getTotal_balance().toString());
-                    totalIncome.setText("IDR " + result.getTotal_income().toString());
-                    totalExpense.setText("IDR " + result.getTotal_expense().toString());
+                    totalBalance.setText(currencyRupiah(result.getTotal_balance().toString()));
+                    totalIncome.setText(currencyRupiah(result.getTotal_income().toString()));
+                    totalExpense.setText(currencyRupiah(result.getTotal_expense().toString()));
                 }
             }
 
@@ -129,6 +135,16 @@ public class HomeFragment extends Fragment {
 
             }
         });
+    }
+
+    private String currencyRupiah(String amount){
+        Double money = Double.parseDouble(amount);
+        if(money < 0) {
+            money *= -1;
+        }
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(money);
     }
 
     private void loadTodayActivities()

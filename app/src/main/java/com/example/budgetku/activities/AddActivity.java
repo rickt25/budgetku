@@ -2,6 +2,7 @@ package com.example.budgetku.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -152,6 +153,7 @@ public class AddActivity extends AppCompatActivity {
                 if(response.isSuccessful())
                 {
                     Toast.makeText(getApplicationContext(),"Activity Created", Toast.LENGTH_LONG).show();
+                    setResult(Activity.RESULT_OK);
                     finish();
                 }
             }

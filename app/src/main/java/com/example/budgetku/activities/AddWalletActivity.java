@@ -1,9 +1,11 @@
 package com.example.budgetku.activities;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -63,6 +65,7 @@ public class AddWalletActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addWallet(wallet_name.getText().toString(), Integer.parseInt(initial_balance.getText().toString()));
+
             }
         });
     }
@@ -77,7 +80,6 @@ public class AddWalletActivity extends AppCompatActivity {
         SharedPreferences shared =  getApplication().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         this.token = "Bearer " + shared.getString(LoginActivity.token,"");
 
-        Log.d("Token: ", this.token);
         Call<Response> walletResponseCall = ApiClient.walletService().addWallet(this.token, walletRequest);
 
         walletResponseCall.enqueue(new Callback<Response>() {
@@ -86,6 +88,8 @@ public class AddWalletActivity extends AppCompatActivity {
                 if(response.isSuccessful())
                 {
                     alertDialog.show();
+                    setResult(Activity.RESULT_OK);
+                    finish();
                 }
             }
 

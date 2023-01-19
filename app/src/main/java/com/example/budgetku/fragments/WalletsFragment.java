@@ -1,16 +1,24 @@
 package com.example.budgetku.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +35,9 @@ import com.example.budgetku.model.api.WalletResponse;
 import com.example.budgetku.model.object.Wallet;
 
 import org.json.JSONObject;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,7 +66,10 @@ public class WalletsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -74,7 +88,7 @@ public class WalletsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddWalletActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 10001);
             }
         });
 
@@ -108,7 +122,7 @@ public class WalletsFragment extends Fragment {
                             totalWealth += wallet.getBalance();
                         }
 
-                        totalWealthView.setText("IDR" + totalWealth.toString());
+                        totalWealthView.setText(currencyRupiah(totalWealth.toString()));
                         adapter.setWallets(walletResponse.getData());
                         rvWallets.setAdapter(adapter);
                     }
@@ -127,5 +141,27 @@ public class WalletsFragment extends Fragment {
                 Toast.makeText(getContext(), "throwable" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        FragmentManager fragmentManager = getFragmentManager();
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == 10001) && (resultCode == Activity.RESULT_OK))
+            // recreate your fragment here
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                fragmentManager.beginTransaction().detach(this).commitNow();
+                fragmentManager.beginTransaction().attach(this).commitNow();
+            } else {
+                fragmentManager.beginTransaction().detach(this).attach(this).commit();
+            }
+    }
+
+    private String currencyRupiah(String amount){
+        Double money = Double.parseDouble(amount);
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(money);
     }
 }

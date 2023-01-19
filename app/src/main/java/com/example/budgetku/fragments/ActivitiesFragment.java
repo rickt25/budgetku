@@ -1,13 +1,16 @@
 package com.example.budgetku.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +27,6 @@ import com.example.budgetku.activities.AddWalletActivity;
 import com.example.budgetku.activities.LoginActivity;
 import com.example.budgetku.adapters.DailyActivityAdapter;
 import com.example.budgetku.model.api.ActivityResponse;
-import com.example.budgetku.model.object.Activity;
 import com.example.budgetku.model.object.DailyActivity;
 
 import java.util.ArrayList;
@@ -73,7 +75,7 @@ public class ActivitiesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 10001);
             }
         });
 
@@ -109,5 +111,20 @@ public class ActivitiesFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        FragmentManager fragmentManager = getFragmentManager();
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == 10001) && (resultCode == Activity.RESULT_OK))
+            // recreate your fragment here
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                fragmentManager.beginTransaction().detach(this).commitNow();
+                fragmentManager.beginTransaction().attach(this).commitNow();
+            } else {
+                fragmentManager.beginTransaction().detach(this).attach(this).commit();
+            }
     }
 }

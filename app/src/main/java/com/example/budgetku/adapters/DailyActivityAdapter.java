@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.budgetku.R;
 import com.example.budgetku.model.object.DailyActivity;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class DailyActivityAdapter extends RecyclerView.Adapter<DailyActivityAdapter.DailyActivityViewHolder> {
     private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
@@ -36,9 +38,9 @@ public class DailyActivityAdapter extends RecyclerView.Adapter<DailyActivityAdap
         DailyActivity dailyActivity = dailyActivityList.get(i);
 
         itemViewHolder.activity_date.setText(dailyActivity.getDate());
-        itemViewHolder.total.setText(dailyActivity.getTotal().toString());
+        itemViewHolder.total.setText(currencyRupiah(dailyActivity.getTotal().toString()));
 
-        if(Integer.parseInt(itemViewHolder.total.getText().toString()) < 0)
+        if(dailyActivity.getTotal() < 0)
         {
             itemViewHolder.total.setTextColor(Color.RED);
         }
@@ -78,5 +80,15 @@ public class DailyActivityAdapter extends RecyclerView.Adapter<DailyActivityAdap
             total = itemView.findViewById(R.id.total);
             rvDailyActivities = itemView.findViewById(R.id.rvDailyActivities);
         }
+    }
+
+    private String currencyRupiah(String amount){
+        Double money = Double.parseDouble(amount);
+        if(money < 0) {
+            money *= -1;
+        }
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(money);
     }
 }

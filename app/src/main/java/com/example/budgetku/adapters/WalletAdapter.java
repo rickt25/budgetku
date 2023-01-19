@@ -25,7 +25,9 @@ import com.example.budgetku.model.object.Wallet;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,13 +87,13 @@ public class WalletAdapter extends RecyclerView.Adapter<WalletAdapter.ViewHolder
         walletName.setText(wallet.getWallet_name());
 
         TextView balance = holder.balance;
-        balance.setText("IDR" + wallet.getBalance().toString());
+        balance.setText(currencyRupiah(wallet.getBalance().toString()));
 
         ImageButton deleteButton = holder.deleteButton;
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteWallet(wallet);
+                deleteWallet(holder.getAdapterPosition());
             }
         });
 
@@ -102,7 +104,8 @@ public class WalletAdapter extends RecyclerView.Adapter<WalletAdapter.ViewHolder
 
     }
 
-    public void deleteWallet(Wallet wallet){
+    public void deleteWallet(int position){
+        Wallet wallet = wallets.get(position);
         Call<com.example.budgetku.model.object.Response> deleteResponse = ApiClient.walletService().deleteWalletById(token, wallet.getId().toString());
 
         deleteResponse.enqueue(new Callback<Response>() {
@@ -110,8 +113,9 @@ public class WalletAdapter extends RecyclerView.Adapter<WalletAdapter.ViewHolder
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
                 if(response.isSuccessful())
                 {
-                    wallets.remove(wallet);
-                    notifyDataSetChanged();
+                    wallets.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, wallets.size());
 
                     alertDialog.show();
                 }
@@ -127,5 +131,12 @@ public class WalletAdapter extends RecyclerView.Adapter<WalletAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return this.wallets.size();
+    }
+
+    private String currencyRupiah(String amount){
+        Double money = Double.parseDouble(amount);
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(money);
     }
 }
