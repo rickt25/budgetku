@@ -46,7 +46,7 @@
         android:id="@+id/totalWealthText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="IDR"
+        android:text="Rp.0"
         android:textSize="30dp"
         android:layout_marginBottom="1mm"
         android:layout_marginTop="1mm"

@@ -82,7 +82,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Income today:"
+                android:text="Income this month:"
                 android:textSize="20dp"/>
 
             <TextView
@@ -99,7 +99,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Expense today:"
+                android:text="Expense this month:"
                 android:textSize="20dp"/>
 
             <TextView
